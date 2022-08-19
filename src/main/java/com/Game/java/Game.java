@@ -10,5 +10,10 @@ public class Game {
 
     * */
     public static int width = 300;
+    // we want the game window to be in the 16:9 aspect ratio, based on the width
     public static int height = width / 16 * 9;
+    // how much our game will be scaled up
+    // eventually will multiply the width and height by the scale
+    public static int scale = 3;
+
 }
