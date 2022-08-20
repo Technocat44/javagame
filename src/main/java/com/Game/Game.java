@@ -2,6 +2,7 @@ package com.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 
 // runnable allows us to put (this) in the thread
 // means the thread we create is attached to the game object
@@ -42,7 +43,6 @@ public class Game extends Canvas implements Runnable{
     public Game() {
         Dimension size = new Dimension(width*scale, height*scale);
         setPreferredSize(size); // method from canvas/component
-
         frame = new JFrame();
     }
     public synchronized void start() {
@@ -66,12 +66,53 @@ public class Game extends Canvas implements Runnable{
 
     When we start the gameThread we set running to true,
     When we stop the gameThread we set running to false.
+
+    People with faster computers will run the game faster
+    People with slower computers will run the game slower
+    WE need to normalize this so all game no matter the computer
+    run at the same FPS.
+
+    the run method is called when the game gets created in the constructor
+    since Game implements Runnable, after Game is created, run is automatically called.
     */
     @Override
     public void run() {
         while(running){
-            System.out.println("Running...");
+            update(); // update will run 60 times per second, handles logic
+            render(); // unlimited or as fast as we can, display image
         }
+    }
+
+    public void update() {
+
+    }
+
+    /* buffering
+    a temporary storage place.
+
+    When a game renders, it has to go pixel by pixel and update the
+    color to the pixel, so instead of doing that live, we do it by
+    buffering. We create the entire frame in a buffer and once it completes
+    then we display it.
+
+    We need a physical place in memory to store the frame as its buffering
+
+    */
+    public void render() {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null){
+            createBufferStrategy(3); // 3 is the golden number. starts 3 buffers each filling at different intervals
+        }
+        // need to make the buffer object visible
+        if (bs != null){
+            Graphics g = bs.getDrawGraphics();
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.dispose(); // releases all systems resources, at end of frame need to remove the graphics we aren't using a
+            bs.show(); // makes next buffer visible
+        }
+
+
     }
 
     // static means it has no relation with the rest of the class
