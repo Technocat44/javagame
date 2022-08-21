@@ -1,12 +1,17 @@
 package com.Game;
 
+import com.Game.graphics.Screen;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+
 
 // runnable allows us to put (this) in the thread
 // means the thread we create is attached to the game object
-public class Game extends Canvas implements Runnable{
+public class Game extends Canvas implements Runnable {
 
     /* public means we can access it anywhere in our project
 
@@ -39,10 +44,27 @@ public class Game extends Canvas implements Runnable{
     private final JFrame frame; // JFrame is a window
     private boolean running = false;
 
+    // a buffered Image object is an image with an accessible buffer of image data
+    private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    // once we have the image we can write to it
+    // we want to retrieve a writable raster to change each pixel
+
+    /* How this works is we contact the image, get the array of pixels that make
+    up the image, get the dataBuffer that handles the raster
+
+    We are converting the image object into an array of integers, which will
+    single which pixel gets which color, and we can manipulate the pixels then
+    however we want
+     */
+    private int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
+    private Screen screen; //  we create a screen object
+
+
     // constructor will only be run once when object is created
     public Game() {
         Dimension size = new Dimension(width*scale, height*scale);
         setPreferredSize(size); // method from canvas/component
+        screen = new Screen(width, height);
         frame = new JFrame();
     }
     public synchronized void start() {
@@ -128,5 +150,76 @@ public class Game extends Canvas implements Runnable{
 
         game.start();
     }
+
+    /*
+    We need a window to display our game.
+    For a game, we are rendering an image to a screen, so we want
+    the game to keep updating the image. So we create a game loop.
+
+    We also need a window to display the game. We make the Game class
+    extend Canvas. Canvas represents a black rectangle on the screen
+    which can be drawn on.
+
+    Create a new variable named frame of type JFrame, which will act
+    as the window.
+
+    Then we create a render() and update() function to loop over while the
+    game is running.
+
+    When a game renders, it has to go pixel by pixel and update the
+    color to the pixel, so instead of doing that live, we do it by
+    buffering. We create the entire frame in a buffer and once it completes
+    then we display it.
+
+    We need a physical place in memory to store the frame as its buffering
+
+
+    How do we manage to get images on the screen?
+    We need to render a color to every single pixel on the screen.
+
+    A RASTER is a data structure that represents a grid or array of pixels.
+    Raster images are compiled using pixels, or tiny dots, containing unique color and tonal information that
+    come together to create the image.
+
+    Since raster images are pixel based, they are resolution dependent.
+     The number of pixels that make up an image as well as how many of
+     those pixels are displayed per inch, both determine the quality of
+     an image. As you may have guessed, the more pixels in the image and
+      the higher the resolution is, the higher quality the image will be.
+
+    For example, if we scale a raster image to enlarge it, without changing
+    resolution, it will lose quality and look blurry or pixilated. This
+    is because we are stretching the pixels over a larger area, thus
+    making them look less sharp. This is a common problem but can
+    be remedied by using raster image editing programs such as Photoshop
+    to change resolution and properly scale images.
+
+    We use the bufferedImage class to handle this:
+
+    The java.awt.Image class is the superclass that represents graphical
+    images as rectangular arrays of pixels. The java.awt.image.BufferedImage class,
+    which extends the Image class to allow the application to operate directly with
+    image data (for example, retrieving or setting up the pixel color).
+     Applications can directly construct instances of this class.
+
+    The BufferedImage class is a cornerstone of the Java 2D immediate-mode
+    imaging API. It manages the image in memory and provides methods for
+    storing, interpreting, and obtaining pixel data. Since BufferedImage is
+     a subclass of Image it can be rendered by the Graphics and Graphics2D
+     methods that accept an Image parameter.
+
+    A BufferedImage is essentially an Image with an accessible data buffer.
+    It is therefore more efficient to work directly with BufferedImage.
+    A BufferedImage has a ColorModel and a Raster of image data.
+    The ColorModel provides a color interpretation of the image's pixel data.
+
+    We create an array to store all of the pixels from the BufferedImage.
+
+
+    Now we have the pixels from the Image, lets create a new Class called
+    Screen.
+
+
+     */
 }
 
