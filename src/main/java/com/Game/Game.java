@@ -125,11 +125,20 @@ public class Game extends Canvas implements Runnable {
         if (bs == null){
             createBufferStrategy(3); // 3 is the golden number. starts 3 buffers each filling at different intervals
         }
+        // make sure to clear before rendering a new image
+        screen.clear();
+        screen.render();
+
+        // we copy the pixels from the screen object pixels to the game image pixels;
+        for (int i = 0; i < pixels.length; i++) {
+            pixels[i] = screen.pixels[i];
+        }
         // need to make the buffer object visible
         if (bs != null){
             Graphics g = bs.getDrawGraphics();
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
+            //  g.setColor(Color.BLACK);
+            //  g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
             g.dispose(); // releases all systems resources, at end of frame need to remove the graphics we aren't using a
             bs.show(); // makes next buffer visible
         }
