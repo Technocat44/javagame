@@ -7,7 +7,7 @@ public class Screen {
     public int[] pixels; //
 
     //############DEMO CODE TO SHOWCASE ANIMATIONS######################
-    int time = 0;
+    int xtime = 0, ytime = 0;
     int counter = 0;
     // update render for loop, replace x and y with time
     //##################################################################
@@ -29,13 +29,18 @@ public class Screen {
     public void render() {
         //############DEMO CODE TO SHOWCASE ANIMATIONS######################
         counter++;
-        if (counter % 100 == 0){
-            time++;
+        if (counter % 10 == 0){
+            xtime++;
+        }
+        if (counter % 8 == 0){
+            ytime++;
         }
         //##################################################################
         // iterate over the rows one by one which is why x is inner loop
         for (int y = 0; y < height; y++) {
+            if (ytime >= height){ break; }
             for (int x = 0; x < width; x++) {
+                if (xtime >= width) { break; }
                 /* since pixels is a one dimensional array
                 there are no coordinates. so we create our own basically
 
@@ -59,7 +64,7 @@ public class Screen {
                 */
                 // to specifically target one pixel change the x and y to a
                 // hardcoded value, i.e. pixels[20 + (40 * width)]
-                pixels[x + (y * width)] = 0xff00ff; // pink
+                pixels[xtime + (ytime * width)] = 0xff00ff; // pink
 
 
                 // we need to clear the screen after each image
